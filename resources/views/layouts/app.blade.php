@@ -99,6 +99,19 @@ firebase.initializeApp(firebaseConfig);
     .then(function(token){
 
         console.log(token);
+        $.ajax({
+                    url: "{{ route('user.save_fcm_token') }}",
+                    type: 'POST',
+                    data: {
+                        fcm_token: token ,_token:'{{csrf_token()}}'
+                    },
+                    dataType: 'JSON',
+                    success: function (res) {
+                    },
+                    error: function (err) {
+                        console.log(" Can't do because: " + err);
+                    },
+                });
     })
     .catch(function(error){
         console.log("error");
