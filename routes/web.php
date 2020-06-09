@@ -20,3 +20,4 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/save_fcm_token', 'HomeController@save_fcm_token')->name('user.save_fcm_token');
