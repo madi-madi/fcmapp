@@ -18,6 +18,11 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    {{-- s:firebase fcm --}}
+    <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-messaging.js"></script>
+    <link rel="manifest" href="manifest.json">
+    {{-- e:firebase fcm --}}
 </head>
 <body>
     <div id="app">
@@ -76,5 +81,34 @@
             @yield('content')
         </main>
     </div>
+    {{-- s:firebase fcm --}}
+
+    <script src="{{asset('firebase.js')}}"></script>
+    <script>
+        //   Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+    const messaging = firebase.messaging();
+     messaging.usePublicVapidKey("BHEY-Wpn9vlEhg27SwBkmvf1goTNC4J0wwao614MwwTnER97izgxwuME4_bph-xdx8KalBDzPkKMOlOMF5DTkfA");
+
+    messaging.requestPermission()
+    .then(function(){
+        console.log('genrated no permission');
+        return messaging.getToken();
+    })
+    .then(function(token){
+
+        console.log(token);
+    })
+    .catch(function(error){
+        console.log("error");
+        console.log(error);
+    });
+    
+    </script>
+    {{-- e:firebase fcm --}}
+
+    <div id="sound"></div>
+
 </body>
 </html>
