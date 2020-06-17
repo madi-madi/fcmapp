@@ -19,7 +19,8 @@ class PostObserver
         $body = "New Post : ".$post->title;
         $icon =null;
         $data = $post;
-        $device_token = DB::table('users')->where('id',2)->where('fcm_token','!=','')->pluck('fcm_token')->toArray();
+        $auth_id = auth()->id();
+        $device_token = DB::table('users')->where('id','<>',$auth_id)->where('fcm_token','!=','')->pluck('fcm_token')->toArray();
         $ob = new FCMAPP;
          $result = $ob->sendTo($device_token,$title,$body,$icon,$data);
     }
