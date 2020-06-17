@@ -97,7 +97,6 @@ firebase.initializeApp(firebaseConfig);
         return messaging.getToken();
     })
     .then(function(token){
-
         console.log(token);
         $.ajax({
                     url: "{{ route('user.save_fcm_token') }}",
@@ -117,7 +116,30 @@ firebase.initializeApp(firebaseConfig);
         console.log("error");
         console.log(error);
     });
+
+    // Handle incoming messages. Called when:
+    // - a message is received while the app has focus
+    // - the user clicks on an app notification created by a service worker
+    //   `messaging.setBackgroundMessageHandler` handler.
+    messaging.onMessage((payload) => {
+    console.log('Message received. ', payload);
+    play(payload.notification);
     
+    // ...
+    });
+    function play(n) {
+
+    options = {
+    'body' : n.body,
+    'icon' : n.icon,
+    'silent' : 'false',
+    'sound' : 'inflicted.ogg'
+    }
+
+    var notification = new Notification(n.title, options);
+    //  var audio = new Audio('inflicted.ogg');
+    //  audio.play();
+    }
     </script>
     {{-- e:firebase fcm --}}
 
