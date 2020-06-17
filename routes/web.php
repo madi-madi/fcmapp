@@ -21,3 +21,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/save_fcm_token', 'HomeController@save_fcm_token')->name('user.save_fcm_token');
+Route::resource('/posts', 'PostsController')->middleware('auth');
