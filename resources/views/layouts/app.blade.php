@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/52acb2c308.js" crossorigin="anonymous"></script>
     {{-- s:firebase fcm --}}
     <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-messaging.js"></script>
@@ -55,6 +56,30 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
+                                <a id="navbarDropdown" class="nav-link " href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    <i class="fas fa-bell fa-lg text-info"></i><sup class="badge badge-success notification-count" id="notification_count">{{isset($notificationCount)? $notificationCount:0}}</sup>
+                                </a>
+                                
+                                <div class="dropdown-menu dropdown-menu-right bg-dark" 
+                                aria-labelledby="navbarDropdown"
+                                style="overflow-y: scroll;min-height:200px;"
+                                id="notification_list"
+                                >
+                                @if ($notifications && count($notifications) > 0)
+                                    @foreach ($notifications as $notify)
+                                    <a class="dropdown-item text-white" uid="{!! $notify->id !!}" href="jaavascript:;"
+                                       >
+                                        <span >{{$notify->data['message']}}</span>
+                                        <sub>{{ $notify->created_at->diffForHumans() }}</sub>
+                                    </a>
+                                        
+                                    @endforeach
+                                @endif
+\
+                           
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
@@ -89,7 +114,7 @@
 firebase.initializeApp(firebaseConfig);
 
     const messaging = firebase.messaging();
-     messaging.usePublicVapidKey("BHEY-Wpn9vlEhg27SwBkmvf1goTNC4J0wwao614MwwTnER97izgxwuME4_bph-xdx8KalBDzPkKMOlOMF5DTkfA");
+     messaging.usePublicVapidKey("keykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykeykey");
 
     messaging.requestPermission()
     .then(function(){
@@ -117,15 +142,25 @@ firebase.initializeApp(firebaseConfig);
         console.log(error);
     });
 
-    // Handle incoming messages. Called when:
-    // - a message is received while the app has focus
-    // - the user clicks on an app notification created by a service worker
-    //   `messaging.setBackgroundMessageHandler` handler.
     messaging.onMessage((payload) => {
     console.log('Message received. ', payload);
     play(payload.notification);
-    
-    // ...
+    var notify_input = document.getElementById('notification_count');
+     var notify_count = parseInt(notify_input.innerHTML);
+     notify_count = notify_count +1;
+     notify_input.innerHTML = notify_count;
+
+     var noteTitle = payload.notification.title;
+     var noteData = JSON.parse(payload.data.fcmapp);
+      var ul = document.getElementById("notification_list");
+      var li = `
+      <a uid="${noteData.id}" 
+      href="jaavascript:;" class="dropdown-item text-white">
+      <span>${noteData.message}</span> 
+      <sub>${noteData.created_at}</sub>
+      </a>
+      `;
+     $("#notification_list").prepend(li);
     });
     function play(n) {
 
@@ -137,13 +172,10 @@ firebase.initializeApp(firebaseConfig);
     }
 
     var notification = new Notification(n.title, options);
-    //  var audio = new Audio('inflicted.ogg');
-    //  audio.play();
     }
     </script>
     {{-- e:firebase fcm --}}
 
-    <div id="sound"></div>
 
 </body>
 </html>
