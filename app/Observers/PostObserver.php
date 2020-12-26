@@ -3,8 +3,12 @@
 namespace App\Observers;
 
 use App\Post;
-use FCMAPP;
-use DB;
+use App\User;
+use  App\Jobs\NewPostJob;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\PushNotification;
+
+
 class PostObserver
 {
     /**
@@ -15,14 +19,10 @@ class PostObserver
      */
     public function created(Post $post)
     {
-        $title ="Fcmapp";
-        $body = "New Post : ".$post->title;
-        $icon =null;
-        $data = $post;
         $auth_id = auth()->id();
-        $device_token = DB::table('users')->where('id','<>',$auth_id)->where('fcm_token','!=','')->pluck('fcm_token')->toArray();
-        $ob = new FCMAPP;
-         $result = $ob->sendTo($device_token,$title,$body,$icon,$data);
+        $users = User::where('id','!=',$auth_id)->get();
+        Notification::send($users ,new PushNotification($post));
+
     }
 
     /**
